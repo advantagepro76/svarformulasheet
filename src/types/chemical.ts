@@ -14,7 +14,7 @@ export interface FormulaItem {
 }
 
 export interface SavedFormula {
-  id: string;
+  id?: string; // ✅ optional because Firestore auto-generates it
   code: string;
   name: string;
   items: FormulaItem[];

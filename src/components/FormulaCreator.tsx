@@ -2,11 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Plus, Save, Printer } from 'lucide-react';
-import { Chemical, FormulaItem } from '@/types/chemical';
+import { Chemical, FormulaItem, SavedFormula } from '@/types/chemical';
 import FormulaRow from './FormulaRow';
 import { useToast } from "@/hooks/use-toast";
+
+import { collection, addDoc } from "firebase/firestore";
+import { db } from "@/firebase";
 
 interface FormulaCreatorProps {
   chemicals: Chemical[];
@@ -16,14 +25,21 @@ const FormulaCreator: React.FC<FormulaCreatorProps> = ({ chemicals }) => {
   const [formulaItems, setFormulaItems] = useState<FormulaItem[]>([{
     id: '1', rawMaterial: '', quantityInGrams: 0, pricePerKg: 0, totalPrice: 0
   }]);
+
   const [formulaName, setFormulaName] = useState('');
-  const [multiplyingFactor, setMultiplyingFactor] = useState(1);
+  const [multiplyingFactorInput, setMultiplyingFactorInput] = useState("1");
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const { toast } = useToast();
 
+  const multiplyingFactor = parseFloat(multiplyingFactorInput) || 1;
+
   const addNewRow = () => {
     const newItem: FormulaItem = {
-      id: Date.now().toString(), rawMaterial: '', quantityInGrams: 0, pricePerKg: 0, totalPrice: 0
+      id: Date.now().toString(),
+      rawMaterial: '',
+      quantityInGrams: 0,
+      pricePerKg: 0,
+      totalPrice: 0
     };
     setFormulaItems([...formulaItems, newItem]);
   };
@@ -50,9 +66,10 @@ const FormulaCreator: React.FC<FormulaCreatorProps> = ({ chemicals }) => {
     if (totalQuantity > 0) {
       const updatedItems = formulaItems.map(item => ({
         ...item,
-        totalPrice: item.quantityInGrams > 0 && item.pricePerKg > 0
-          ? (item.quantityInGrams * item.pricePerKg) / totalQuantity
-          : 0
+        totalPrice:
+          item.quantityInGrams > 0 && item.pricePerKg > 0
+            ? (item.quantityInGrams * item.pricePerKg) / totalQuantity
+            : 0
       }));
       setFormulaItems(updatedItems);
     }
@@ -84,8 +101,7 @@ const FormulaCreator: React.FC<FormulaCreatorProps> = ({ chemicals }) => {
       return;
     }
 
-    const savedFormula = {
-      id: Date.now().toString(),
+    const savedFormula: SavedFormula = {
       code: generateFormulaCode(),
       name: formulaName,
       totalCost: getTotalCost(),
@@ -95,9 +111,7 @@ const FormulaCreator: React.FC<FormulaCreatorProps> = ({ chemicals }) => {
     };
 
     try {
-      const previous = JSON.parse(localStorage.getItem('savedFormulas') || '[]');
-      localStorage.setItem('savedFormulas', JSON.stringify([...previous, savedFormula]));
-
+      await addDoc(collection(db, "formulas"), savedFormula);
       setShowSaveDialog(false);
       setFormulaName('');
 
@@ -108,7 +122,7 @@ const FormulaCreator: React.FC<FormulaCreatorProps> = ({ chemicals }) => {
     } catch (err) {
       toast({
         title: "Save Failed",
-        description: "Could not save formula to local storage",
+        description: "Could not save formula to Firebase",
         variant: "destructive",
       });
     }
@@ -117,11 +131,17 @@ const FormulaCreator: React.FC<FormulaCreatorProps> = ({ chemicals }) => {
   const handlePrint = () => {
     const validItems = formulaItems.filter(item => item.rawMaterial && item.quantityInGrams > 0);
     if (validItems.length === 0) {
-      toast({ title: "No Valid Items", description: "Please add at least one raw material with quantity to print.", variant: "destructive" });
+      toast({
+        title: "No Valid Items",
+        description: "Please add at least one raw material with quantity to print.",
+        variant: "destructive",
+      });
       return;
     }
+
     const totalQuantity = getTotalQuantity();
     const sellingPrice = getSellingPrice();
+
     const printWindow = window.open('', '_blank');
     if (printWindow) {
       printWindow.document.write(`
@@ -232,7 +252,10 @@ const FormulaCreator: React.FC<FormulaCreatorProps> = ({ chemicals }) => {
 
         {/* Summary Section */}
         <div className="border-t pt-6 mt-6 space-y-6">
+<<<<<<< HEAD
           {/* Totals Grid */}
+=======
+>>>>>>> 7bd7ce3 (Added Firebase saving to FormulaCreator)
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="text-center p-6 rounded-xl bg-blue-50">
               <div className="text-2xl font-bold text-blue-600">{getTotalQuantity().toFixed(2)} g</div>
@@ -245,20 +268,31 @@ const FormulaCreator: React.FC<FormulaCreatorProps> = ({ chemicals }) => {
             </div>
           </div>
 
+<<<<<<< HEAD
           {/* Multiplying Factor Input */}
+=======
+>>>>>>> 7bd7ce3 (Added Firebase saving to FormulaCreator)
           <div>
             <label className="block text-sm font-medium text-gray-800 mb-2">Multiplying Factor</label>
             <Input
               type="number"
               step="0.1"
               min="0.1"
+<<<<<<< HEAD
               value={multiplyingFactor}
               onChange={(e) => setMultiplyingFactor(Number(e.target.value))}
+=======
+              value={multiplyingFactorInput}
+              onChange={(e) => setMultiplyingFactorInput(e.target.value)}
+>>>>>>> 7bd7ce3 (Added Firebase saving to FormulaCreator)
               className="max-w-xs"
             />
           </div>
 
+<<<<<<< HEAD
           {/* Selling Price */}
+=======
+>>>>>>> 7bd7ce3 (Added Firebase saving to FormulaCreator)
           <div className="text-center p-6 rounded-xl bg-purple-50">
             <div className="text-2xl font-bold text-purple-600">₹{getSellingPrice().toFixed(4)}</div>
             <div className="text-sm text-gray-600">Selling Price (Total Cost × {multiplyingFactor})</div>
