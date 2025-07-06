@@ -175,95 +175,98 @@ const FormulaCreator: React.FC<FormulaCreatorProps> = ({ chemicals }) => {
 
   return (
     <Card>
-  <CardHeader>
-    <CardTitle className="flex justify-between items-center">
-      <span className="text-lg">Formula Creator</span>
-      <div className="flex gap-2">
-        <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
-          <DialogTrigger asChild>
-            <Button className="bg-green-600 hover:bg-green-700 flex items-center gap-2 text-sm">
-              <Save className="w-4 h-4" /> Save
+      <CardHeader>
+        <CardTitle className="flex justify-between items-center">
+          <span className="text-lg">Formula Creator</span>
+          <div className="flex gap-2">
+            <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
+              <DialogTrigger asChild>
+                <Button className="bg-green-600 hover:bg-green-700 flex items-center gap-2 text-sm">
+                  <Save className="w-4 h-4" /> Save
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="w-[95vw] max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Save Formula</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <Input
+                    placeholder="Enter formula name"
+                    value={formulaName}
+                    onChange={(e) => setFormulaName(e.target.value)}
+                  />
+                  <Button onClick={handleSaveFormula} className="w-full">Save Formula</Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+            <Button onClick={handlePrint} variant="outline" className="flex items-center gap-2 text-sm">
+              <Printer className="w-4 h-4" /> Print
             </Button>
-          </DialogTrigger>
-          <DialogContent className="w-[95vw] max-w-md">
-            <DialogHeader>
-              <DialogTitle>Save Formula</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <Input
-                placeholder="Enter formula name"
-                value={formulaName}
-                onChange={(e) => setFormulaName(e.target.value)}
-              />
-              <Button onClick={handleSaveFormula} className="w-full">Save Formula</Button>
+          </div>
+        </CardTitle>
+      </CardHeader>
+
+      <CardContent className="p-3 sm:p-6">
+        <div className="space-y-2 mb-4">
+          {formulaItems.map((item, index) => (
+            <FormulaRow
+              key={item.id}
+              item={item}
+              index={index}
+              chemicals={chemicals}
+              totalQuantity={getTotalQuantity()}
+              onUpdate={(updatedItem) => updateItem(index, updatedItem)}
+              onRemove={() => removeItem(index)}
+            />
+          ))}
+        </div>
+
+        <div className="flex justify-center mb-6">
+          <Button
+            onClick={addNewRow}
+            className="bg-blue-600 hover:bg-blue-700 flex items-center gap-2 text-sm"
+          >
+            <Plus className="w-4 h-4" /> Add Raw Material
+          </Button>
+        </div>
+
+        {/* Summary Section */}
+        <div className="border-t pt-6 mt-6 space-y-6">
+          {/* Totals Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="text-center p-6 rounded-xl bg-blue-50">
+              <div className="text-2xl font-bold text-blue-600">{getTotalQuantity().toFixed(2)} g</div>
+              <div className="text-sm text-gray-600">Total Quantity</div>
             </div>
-          </DialogContent>
-        </Dialog>
-        <Button onClick={handlePrint} variant="outline" className="flex items-center gap-2 text-sm">
-          <Printer className="w-4 h-4" /> Print
-        </Button>
-      </div>
-    </CardTitle>
-  </CardHeader>
 
-  <CardContent className="p-3 sm:p-6">
-    <div className="space-y-2 mb-4">
-      {formulaItems.map((item, index) => (
-        <FormulaRow
-          key={item.id}
-          item={item}
-          index={index}
-          chemicals={chemicals}
-          totalQuantity={getTotalQuantity()}
-          onUpdate={(updatedItem) => updateItem(index, updatedItem)}
-          onRemove={() => removeItem(index)}
-        />
-      ))}
-    </div>
+            <div className="text-center p-6 rounded-xl bg-green-50">
+              <div className="text-2xl font-bold text-green-600">₹{getTotalCost().toFixed(4)}</div>
+              <div className="text-sm text-gray-600">Total Cost</div>
+            </div>
+          </div>
 
-    <div className="flex justify-center mb-6">
-      <Button
-        onClick={addNewRow}
-        className="bg-blue-600 hover:bg-blue-700 flex items-center gap-2 text-sm"
-      >
-        <Plus className="w-4 h-4" /> Add Raw Material
-      </Button>
-    </div>
+          {/* Multiplying Factor Input */}
+          <div>
+            <label className="block text-sm font-medium text-gray-800 mb-2">Multiplying Factor</label>
+            <Input
+              type="number"
+              step="0.1"
+              min="0.1"
+              value={multiplyingFactor}
+              onChange={(e) => setMultiplyingFactor(Number(e.target.value))}
+              className="max-w-xs"
+            />
+          </div>
 
-    {/* Summary Section */}
-    <div className="border-t pt-6 mt-6 space-y-6">
-
-      {/* Totals Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="text-center p-6 rounded-xl bg-blue-50">
-          <div className="text-2xl font-bold text-blue-600">{getTotalQuantity().toFixed(2)} g</div>
-          <div className="text-sm text-gray-600">Total Quantity</div>
+          {/* Selling Price */}
+          <div className="text-center p-6 rounded-xl bg-purple-50">
+            <div className="text-2xl font-bold text-purple-600">₹{getSellingPrice().toFixed(4)}</div>
+            <div className="text-sm text-gray-600">Selling Price (Total Cost × {multiplyingFactor})</div>
+          </div>
         </div>
+      </CardContent>
+    </Card>
+  );
+};
 
-        <div className="text-center p-6 rounded-xl bg-green-50">
-          <div className="text-2xl font-bold text-green-600">₹{getTotalCost().toFixed(4)}</div>
-          <div className="text-sm text-gray-600">Total Cost</div>
-        </div>
-      </div>
-
-      {/* Multiplying Factor Input */}
-      <div>
-        <label className="block text-sm font-medium text-gray-800 mb-2">Multiplying Factor</label>
-        <Input
-          type="number"
-          step="0.1"
-          min="0.1"
-          value={multiplyingFactorInput}
-          onChange={(e) => setMultiplyingFactorInput(e.target.value)}
-          className="max-w-xs"
-        />
-      </div>
-
-      {/* Selling Price */}
-      <div className="text-center p-6 rounded-xl bg-purple-50">
-        <div className="text-2xl font-bold text-purple-600">₹{getSellingPrice().toFixed(4)}</div>
-        <div className="text-sm text-gray-600">Selling Price (Total Cost × {multiplyingFactor})</div>
-      </div>
-    </div>
-  </CardContent>
-</Card>
+export default FormulaCreator;
