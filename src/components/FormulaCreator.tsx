@@ -252,10 +252,7 @@ const FormulaCreator: React.FC<FormulaCreatorProps> = ({ chemicals }) => {
 
         {/* Summary Section */}
         <div className="border-t pt-6 mt-6 space-y-6">
-<<<<<<< HEAD
           {/* Totals Grid */}
-=======
->>>>>>> 7bd7ce3 (Added Firebase saving to FormulaCreator)
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="text-center p-6 rounded-xl bg-blue-50">
               <div className="text-2xl font-bold text-blue-600">{getTotalQuantity().toFixed(2)} g</div>
@@ -268,31 +265,20 @@ const FormulaCreator: React.FC<FormulaCreatorProps> = ({ chemicals }) => {
             </div>
           </div>
 
-<<<<<<< HEAD
           {/* Multiplying Factor Input */}
-=======
->>>>>>> 7bd7ce3 (Added Firebase saving to FormulaCreator)
           <div>
             <label className="block text-sm font-medium text-gray-800 mb-2">Multiplying Factor</label>
             <Input
               type="number"
               step="0.1"
               min="0.1"
-<<<<<<< HEAD
-              value={multiplyingFactor}
-              onChange={(e) => setMultiplyingFactor(Number(e.target.value))}
-=======
               value={multiplyingFactorInput}
               onChange={(e) => setMultiplyingFactorInput(e.target.value)}
->>>>>>> 7bd7ce3 (Added Firebase saving to FormulaCreator)
               className="max-w-xs"
             />
           </div>
 
-<<<<<<< HEAD
           {/* Selling Price */}
-=======
->>>>>>> 7bd7ce3 (Added Firebase saving to FormulaCreator)
           <div className="text-center p-6 rounded-xl bg-purple-50">
             <div className="text-2xl font-bold text-purple-600">₹{getSellingPrice().toFixed(4)}</div>
             <div className="text-sm text-gray-600">Selling Price (Total Cost × {multiplyingFactor})</div>
